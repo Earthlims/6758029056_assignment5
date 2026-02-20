@@ -94,7 +94,7 @@ print(cm)
 plt.figure(figsize=(10, 8))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             cbar_kws={'label': 'Count'})
-plt.title('Confusion Matrix - Bank Classification Model', fontsize=16, fontweight='bold')
+plt.title('Confusion Matrix - Assignment 5', fontsize=16, fontweight='bold')
 plt.ylabel('True Label', fontsize=12)
 plt.xlabel('Predicted Label', fontsize=12)
 
@@ -118,7 +118,7 @@ plt.figure(figsize=(10, 8))
 cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 sns.heatmap(cm_normalized, annot=True, fmt='.2%', cmap='Greens',
             cbar_kws={'label': 'Percentage'})
-plt.title('Normalized Confusion Matrix - Bank Classification Model', fontsize=16, fontweight='bold')
+plt.title('Normalized Confusion Matrix -  Assignment 5', fontsize=16, fontweight='bold')
 plt.ylabel('True Label', fontsize=12)
 plt.xlabel('Predicted Label', fontsize=12)
 
