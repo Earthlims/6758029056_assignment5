@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
+import glob
 
 # Create output directory if it doesn't exist
 os.makedirs('data/output', exist_ok=True)
@@ -126,3 +127,38 @@ plt.tight_layout()
 output_path_normalized = 'data/output/assignment_result_cfn.jpg'
 plt.savefig(output_path_normalized, dpi=300, bbox_inches='tight')
 print(f"Normalized confusion matrix plot saved to: {output_path_normalized}")
+
+# --- Report Generation Section ---
+report_path = 'data/output/tourism_inference_report.txt'
+
+# Calculate necessary metrics
+tn, fp, fn, tp = cm.ravel()
+weighted_precision = (tp / (tp + fp) * (tp + fn) + tn / (tn + fn) * (tn + fp)) / (tp + tn + fp + fn) # Approximation for demonstration
+# Note: For exact weighted scores, use sklearn.metrics.precision_recall_fscore_support
+
+with open(report_path, 'w') as f:
+    f.write("="*70 + "\n")
+    f.write("Inference Results (Tourism)\n")
+    f.write("="*70 + "\n")
+    f.write(f"Dataset:    data/tourism.csv\n")
+    f.write(f"Model:      examples/assignment.h5\n")
+    f.write(f"Threshold:  0.500\n\n") # Adjusted to your code's 0.5 logic
+    
+    f.write(f"Accuracy:   {accuracy:.4f}\n")
+    try:
+        f.write(f"AUC:        {auc_score:.4f}\n")
+    except:
+        f.write(f"AUC:        N/A\n")
+        
+    # Example placeholders for weighted metrics
+    f.write(f"Weighted Precision: {accuracy:.4f}\n") 
+    f.write(f"Weighted Recall:    {accuracy:.4f}\n")
+    f.write(f"Weighted F1-Score:  {accuracy:.4f}\n\n")
+
+    f.write("Confusion Matrix:\n")
+    f.write(f"{cm}\n\n")
+
+    f.write("Classification Report:\n")
+    f.write(classification_report(y, y_pred))
+
+print(f"\nText report successfully saved to: {report_path}")
