@@ -5,6 +5,7 @@ from tensorflow.keras import callbacks
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
 
 # [Data Preparation]+[Feature Extraction]
 # Load the data 
@@ -42,7 +43,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_encoded, y, test_size=0.2, random_state=42, stratify=y
 )
 #stratify คือทำให้ มีจำนวน y อยุ่ใน train test เท่ากัน ไม่ bias 
-
 #scale values ของข้อมูลให้อยู๋ในระดับเดียวกันไม่มีอันไหนเว่อไป เพราะพวกเงินเดือนหรือที่เลขสูงๆ ถ้าไม่ปรับจะมีผลมากเกิน 
 # Standardize the features
 scaler = StandardScaler()
@@ -57,18 +57,20 @@ model = keras.Sequential([
     # Input layer + First hidden layer
     keras.layers.Dense(128, activation='relu', input_shape=(X_train_scaled.shape[1],)),
     # keras.layers.BatchNormalization(),
-    keras.layers.Dropout(0.3),
+    keras.layers.Dropout(0.4),
     
 
     # Second hidden layer
     keras.layers.Dense(64, activation='relu'),
     # keras.layers.BatchNormalization(),
-    keras.layers.Dropout(0.3),
+    keras.layers.Dropout(0.4),
 
     # Third hidden layer
     keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dropout(0.3),
 
     keras.layers.Dense(16, activation='relu'),
+    keras.layers.Dropout(0.3),
 
     # Output layer
     keras.layers.Dense(1, activation='sigmoid')
@@ -80,8 +82,6 @@ def weighted_binary_crossentropy(y_true, y_pred, pos_weight=2.0) :
     weights = y_true * (pos_weight - 1.0) + 1.0
     weighted_bce = bce * weights
     return tf.reduce_mean(weighted_bce)
-
-def focal_loss(y_true, y_pred, alpha=0.15, gamma=2.0):
     """
     Focal loss for handling class imbalance.
     Focuses on hard-to-classify examples.
@@ -132,7 +132,6 @@ callbacks_list = [
     # callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5)
 ]
 
-
 # Train the model
 print("\nTraining the model...")
 history = model.fit(
@@ -143,6 +142,29 @@ history = model.fit(
     verbose=1,
     callbacks=callbacks_list
 )
+
+#สร้าง Graph
+
+plt.figure(figsize=(14,5))
+plt.subplot(1,2,1)
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Val Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.subplot(1,2,2)
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Val Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.tight_layout()
+plt.savefig('data/output/training_5graph.png')
+print("Training graph saved!")
 
 #Train เเล้วมา Test # Evaluate the model on test set
 
